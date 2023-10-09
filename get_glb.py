@@ -1,4 +1,5 @@
 import pyrealsense2.pyrealsense2 as rs
+import aspose.threed as a3d
 import numpy as np
 import cv2
 
@@ -62,6 +63,8 @@ try:
         print("Saving to 1.ply...")
         # Apply the processing block to the frameset which contains the depth frame and the texture
         ply.process(colorized)
+        scene = a3d.Scene.from_file("1.ply")
+        scene.save("Output.glb")
 
         if cv2.waitKey(1) == ord("q"):
             break
