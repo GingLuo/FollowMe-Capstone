@@ -5,7 +5,7 @@ import cv2
 
 is_on = False
 pipeline = None
-
+depth_scale = None
 
 def get_frame():
     global is_on
@@ -32,7 +32,8 @@ def get_frame():
 
 def setup_camera():
     global pipeline
-
+    global depth_scale
+    global is_on
     #TODO: CHange here
     width = 640
     height = 480
@@ -65,7 +66,19 @@ def setup_camera():
 
     is_on = True
 
+if __name__ == "__main__":
+    try:
+        while True:
+            color_image, depth_image, depth_colormap = get_frame()
+            depth = depth_image[320,240].astype(float)*depth_scale
 
+            cv2.imshow('rgb', color_image)
+            cv2.imshow('depth', depth_colormap)
+            print(f'Depth: {depth} m')
+            if cv2.waitKey(1) == ord("q"):
+                break  
+    finally:
+        pipeline.stop()
 # try:
 #     while True:
 #         frames = pipeline.wait_for_frames()
