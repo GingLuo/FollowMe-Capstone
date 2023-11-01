@@ -19,9 +19,9 @@ def get_frame():
 
     # convert images to numpy arrays
     depth_image = np.asanyarray(depth_frame.get_data())
-    print("The size of depth_image is:", depth_image.shape)
+    #print("The size of depth_image is:", depth_image.shape)
     color_image = np.asanyarray(color_frame.get_data())
-    print("The size of color_image is:", color_image.shape)
+    #print("The size of color_image is:", color_image.shape)
     depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
 
     # depth = depth_image[320,240].astype(float)*depth_scale
@@ -75,17 +75,19 @@ if __name__ == "__main__":
             color_image, depth_image, depth_colormap = get_frame()
             depth = depth_image[320,240].astype(float)*depth_scale
 
-            cv2.imshow('rgb', color_image)
-            cv2.imshow('depth', depth_colormap)
+            #cv2.imshow('rgb', color_image)
+            #cv2.imshow('depth', depth_colormap)
             count += 1
             if (count % 100 == 0):
                 cv2.imwrite("pic/color_image"+str(count)+ ".jpg", color_image)
                 cv2.imwrite("pic/depth_image"+str(count)+ ".jpg", depth_colormap)
-            print(f'Depth: {depth} m')
-            if cv2.waitKey(1) == ord("q"):
-                break  
-    finally:
+                print("Stored!")
+            #print(f'Depth: {depth} m')
+            #if cv2.waitKey(1) == ord("q"):
+            #   break  
+    except KeyboardInterrupt:
         pipeline.stop()
+        exit()
 # try:
 #     while True:
 #         frames = pipeline.wait_for_frames()
