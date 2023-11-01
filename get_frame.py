@@ -45,7 +45,9 @@ def setup_camera():
     config = rs.config()
     config.enable_stream(rs.stream.depth, width, height, rs.format.z16, 30)
     config.enable_stream(rs.stream.color, width, height, rs.format.bgr8, 30)
-
+    #device_product_line = str(device.get_info(rs.camera_info.product_line))
+    #print(device_product_line)
+    
     profile = pipeline.start(config)
 
     depth_sensor = profile.get_device().first_depth_sensor()
