@@ -69,6 +69,7 @@ def setup_camera():
     is_on = True
 
 if __name__ == "__main__":
+    count = 0
     try:
         while True:
             color_image, depth_image, depth_colormap = get_frame()
@@ -76,6 +77,10 @@ if __name__ == "__main__":
 
             cv2.imshow('rgb', color_image)
             cv2.imshow('depth', depth_colormap)
+            count += 1
+            if (count % 100 == 0):
+                cv2.imwrite("pic/color_image"+str(count)+ ".jpg", color_image)
+                cv2.imwrite("pic/depth_image"+str(count)+ ".jpg", depth_colormap)
             print(f'Depth: {depth} m')
             if cv2.waitKey(1) == ord("q"):
                 break  

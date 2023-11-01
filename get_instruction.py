@@ -5,8 +5,9 @@
 import numpy as np 
 import cv2 
 import pyrealsense2.pyrealsense2 as rs
-import get_frame
-import torch
+from get_frame import *
+#import pandas
+#import torch
 
 minimum_detection_distance = 0.5 
 maximum_detection_distance = 10
@@ -16,12 +17,14 @@ selection_width = 5
 # @return The return value of function should be 640 x 480 2d array with float value indicating distance.
 def receive_lidar_map():
     global depth_scale
+    depth_image = None
     try:
         depth_image = get_frame()[1]
         depth = depth_image[320,240].astype(float)*depth_scale
+        cv2.imshow('depth', depth_image)
         print(f'Depth: {depth} m')
-        if cv2.waitKey(1) == ord("q"):
-            return [] 
+        #if cv2.waitKey(1) == ord("q"):
+            #return [] 
     finally:
         return depth_image
 
@@ -35,15 +38,16 @@ def receive_labels_map():
     # 1  433.50  433.50   517.5  714.5    0.687988     27     tie
     # 2  114.75  195.75  1095.0  708.0    0.624512      0  person
     # 3  986.00  304.00  1028.0  420.0    0.286865     27     tie
-    yolo_output = [] # source of output
-    result = yolo_output.pandas().xyxy[0]
-    top_left = zip(result['xmin'].toList(), result['ymin'].toList())
-    bottom_right = zip(result['xmax'].toList(), result['ymax'].toList())
-    names = result['name'].toList()
-    preprocess_list = zip(top_left, bottom_right, names)
-    labels = map(preprocess_list, lambda x: list(x))
-    return labels
-    #return [[(300, 300), (400, 400), "Person"]] #example output
+    return [[(300, 300), (400, 400), "Person"]] #example output
+    #yolo_output = [] # source of output
+    #result = yolo_output.pandas().xyxy[0]
+    #top_left = zip(result['xmin'].toList(), result['ymin'].toList())
+    #bottom_right = zip(result['xmax'].toList(), result['ymax'].toList())
+    #names = result['name'].toList()
+    #preprocess_list = zip(top_left, bottom_right, names)
+    #labels = map(preprocess_list, lambda x: list(x))
+    #return labels
+    
 
 # @brief a selective depth calculation algorithm which only consider the small "+" section 
 #        to the middle of the picture  
@@ -89,15 +93,26 @@ def textToSpeaker(text):
     return
 
 if __name__ == "__main__":
+    setup_camera()
     try: 
         while True:
-            depth_image = receive_lidar_map()
+            depth_image = get_frame()[1]
+            if len(depth_image) == 0: 
+                print("Depth image is none!")
+                continue
+            print(depth_scale)
+            depth = depth_image[320,240].astype(float)*depth_scale
+            cv2.imshow('depth', depth_image)
+            print(f'Depth: {depth} m')
+            if cv2.waitKey(1) == ord("q"):
+                break 
+            
             labels = receive_labels_map()
             for elem in labels:
-                result = object_depth_measurement_square(depth_image, elem)
-                object_label = elem[2]
-                text = "There is a " + object_label + " " + str(result) + " in front of you"
-                textToSpeaker(text)
+            	result = object_depth_measurement_square(depth_image, elem)
+            	object_label = elem[2]
+            	text = "There is a " + object_label + " " + str(result) + " in front of you"
+            	textToSpeaker(text)
     finally:
         textToSpeaker("End of service, thanks!")
         print("end")      
