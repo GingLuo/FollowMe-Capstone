@@ -79,8 +79,8 @@ if __name__ == "__main__":
             #cv2.imshow('depth', depth_colormap)
             count += 1
             if (count % 100 == 0):
-                cv2.imwrite("pic/color_image"+str(count)+ ".jpg", color_image)
-                cv2.imwrite("pic/depth_image"+str(count)+ ".jpg", depth_colormap)
+                cv2.imwrite("pic/scaife2/color_image"+str(count)+ ".jpg", color_image)
+                cv2.imwrite("pic/scaife2/depth_image"+str(count)+ ".jpg", depth_colormap)
                 print("Stored!")
             #print(f'Depth: {depth} m')
             #if cv2.waitKey(1) == ord("q"):
