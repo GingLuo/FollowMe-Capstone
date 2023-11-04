@@ -74,17 +74,19 @@ if __name__ == "__main__":
         while True:
             color_image, depth_image, depth_colormap = get_frame()
             depth = depth_image[320,240].astype(float)*depth_scale
-
-            #cv2.imshow('rgb', color_image)
-            #cv2.imshow('depth', depth_colormap)
+            
+            cv2.imshow('rgb', color_image)
+            cv2.imshow('depth', depth_colormap)
             count += 1
             if (count % 100 == 0):
-                cv2.imwrite("pic/techspark2/color_image"+str(count)+ ".jpg", color_image)
-                cv2.imwrite("pic/techspark2/depth_image"+str(count)+ ".jpg", depth_colormap)
+                cv2.imwrite("test/color_image"+str(count//100)+ ".jpg", color_image)
+                cv2.imwrite("test/depth"+ str(depth_scale) + "_image"+str(count//100)+ ".jpg", depth_colormap)
+                np.savetxt("test/test_depth" + str(depth_scale) +"_image" + str(count//100)+".txt", depth_image)
                 print("Stored!")
-            #print(f'Depth: {depth} m')
-            #if cv2.waitKey(1) == ord("q"):
-            #   break  
+                print(f'Depth: {depth} m')
+                print(f'Depth_scale:{depth_scale} m')
+            if cv2.waitKey(1) == ord("q"):
+               break  
     except KeyboardInterrupt:
         pipeline.stop()
         exit()

@@ -6,8 +6,6 @@ import numpy as np
 import cv2 
 import pyrealsense2.pyrealsense2 as rs
 from get_frame import *
-#import pandas
-#import torch
 
 minimum_detection_distance = 0.5 
 maximum_detection_distance = 10
@@ -81,38 +79,54 @@ def object_depth_measurement_square(depth_image, label):
     minx, miny = top_left
     maxx, maxy = bottom_right
     depth_list = dict()
+    depth_list[0] = 1
     for x in range(minx, maxx):
         for y in range(miny, maxy):
             pixel_depth = depth_image[x][y]
             if pixel_depth > minimum_detection_distance and pixel_depth < maximum_detection_distance:
                 #round to nearest tenth
+                print(x, y, pixel_depth)
                 depth_list.append(round(pixel_depth,1))
     return max(depth_list, key=lambda x: depth_list[x])
 
 def textToSpeaker(text):
     return
 
+def testing_Object():
+    depth_image = cv2.imread('pic/techspark2/depth_image2500.jpg')
+    cv2.imshow('depth', depth_image)
+    #cv2.waitKey(0) 
+    labels = [(0, 360), (500, 267), "box"]
+    result = object_depth_measurement_square(depth_image, labels)
+    object_label = "box"
+    text = "There is a " + object_label + " " + str(result) + " in front of you"
+    print(text)
+    print(depth_image)
+    textToSpeaker(text)
+    
+
 if __name__ == "__main__":
-    setup_camera()
-    try: 
-        while True:
-            depth_image = get_frame()[1]
-            if len(depth_image) == 0: 
-                print("Depth image is none!")
-                continue
-            print(depth_scale)
-            depth = depth_image[320,240].astype(float)*depth_scale
-            cv2.imshow('depth', depth_image)
-            print(f'Depth: {depth} m')
-            if cv2.waitKey(1) == ord("q"):
-                break 
+    testing_Object()
+    # setup_camera()
+    # try: 
+    #     while True:
+    #         depth_image = get_frame()[1]
+    #         if len(depth_image) == 0: 
+    #             print("Depth image is none!")
+    #             continue
+    #         print(depth_scale)
+    #         depth = depth_image[320,240].astype(float)*depth_scale
+    #         cv2.imshow('depth', depth_image)
+    #         print(f'Depth: {depth} m')
+    #         if cv2.waitKey(1) == ord("q"):
+    #             break 
             
-            labels = receive_labels_map()
-            for elem in labels:
-            	result = object_depth_measurement_square(depth_image, elem)
-            	object_label = elem[2]
-            	text = "There is a " + object_label + " " + str(result) + " in front of you"
-            	textToSpeaker(text)
-    finally:
-        textToSpeaker("End of service, thanks!")
-        print("end")      
+    #         labels = receive_labels_map()
+    #         for elem in labels:
+    #           result = object_depth_measurement_square(depth_image, elem)
+    #           object_label = elem[2]
+    #           text = "There is a " + object_label + " " + str(result) + " in front of you"
+    #           textToSpeaker(text)
+    # finally:
+    #     textToSpeaker("End of service, thanks!")
+    #     print("end")      
